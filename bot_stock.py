@@ -32,7 +32,10 @@ async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     producto = ' '.join(context.args).lower()
     cantidad = stock.get(producto, 0)
-    await update.message.reply_text(f"📦 Stock de *{producto}*: {cantidad} unidades.", parse_mode='Markdown')
+    await update.message.reply_text(
+        f"📦 Stock de *{producto}*: {cantidad} unidades.",
+        parse_mode='Markdown'
+    )
 
 # /agregar <producto> <cantidad>
 async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -44,7 +47,10 @@ async def add(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cantidad = int(context.args[-1])
         stock[producto] = stock.get(producto, 0) + cantidad
         save_stock()
-        await update.message.reply_text(f"✅ Se agregaron {cantidad} a *{producto}*. Nuevo stock: {stock[producto]}", parse_mode='Markdown')
+        await update.message.reply_text(
+            f"✅ Se agregaron {cantidad} a *{producto}*. Nuevo stock: {stock[producto]}",
+            parse_mode='Markdown'
+        )
     except ValueError:
         await update.message.reply_text("🚫 La cantidad debe ser un número.")
 
@@ -59,7 +65,10 @@ async def remove(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if stock.get(producto, 0) >= cantidad:
             stock[producto] -= cantidad
             save_stock()
-            await update.message.reply_text(f"❌ Se quitaron {cantidad} de *{producto}*. Nuevo stock: {stock[producto]}", parse_mode='Markdown')
+            await update.message.reply_text(
+                f"❌ Se quitaron {cantidad} de *{producto}*. Nuevo stock: {stock[producto]}",
+                parse_mode='Markdown'
+            )
         else:
             await update.message.reply_text("🚫 No hay suficiente stock para quitar.")
     except ValueError:
@@ -77,7 +86,10 @@ async def sold(update: Update, context: ContextTypes.DEFAULT_TYPE):
         stock[producto] -= cantidad
         save_stock()
         guardar_log_venta(producto.title(), cantidad, update.effective_user.first_name)
-        await update.message.reply_text(f"🛒 Vendiste {cantidad} unidad(es) de *{producto}*. Stock restante: {stock[producto]}", parse_mode='Markdown')
+        await update.message.reply_text(
+            f"🛒 Vendiste {cantidad} unidad(es) de *{producto}*. Stock restante: {stock[producto]}",
+            parse_mode='Markdown'
+        )
     else:
         await update.message.reply_text("🚫 No hay suficiente stock disponible.")
 
@@ -117,17 +129,17 @@ async def historial(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if os.path.exists(LOG_FILE):
         with open(LOG_FILE, 'r') as f:
             logs = f.readlines()[-15:]
-            if logs:
-                mensaje = "📝 *Últimas ventas:*\n\n" + ''.join(logs)
-            else:
-                mensaje = "📭 El historial está vacío."
+        if logs:
+            mensaje = "📝 *Últimas ventas:*\n\n" + ''.join(logs)
+        else:
+            mensaje = "📭 El historial está vacío."
     else:
         mensaje = "🚫 No se encontró el archivo de historial."
     await update.message.reply_text(mensaje, parse_mode='Markdown')
 
 # MAIN
 async def main():
-    TOKEN = 'TU_TOKEN_ACÁ'
+    TOKEN = '8434570266:AAEiWMAD3sUX8yVWqO0LTj2i4zHoMvcp2Dw'
     app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("stock", check))
